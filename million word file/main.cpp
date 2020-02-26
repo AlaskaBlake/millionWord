@@ -29,16 +29,14 @@ using std::map;
 
 #include <iomanip>
 
-vector<vector<int>> allThreadTotal;
+#include <iterator>
+using std::advance;
 
-void reset() {
-	for (auto a: allThreadTotal)
-		allThreadTotal.pop_back();
-}
+vector<vector<int>> allThreadTotal;
 
 void checkWord(const string& word, const vector<string>& words, vector<int>& count) {
 	auto iter = lower_bound(words.begin(), words.end(), word);
-	if (iter != words.end() && (*iter).size() == word.size()) {
+	if (iter != words.end() && *iter == word) {
 		int index = iter - words.begin();
 		count[index] += 1;
 	}
@@ -46,7 +44,7 @@ void checkWord(const string& word, const vector<string>& words, vector<int>& cou
 
 template <typename Iter> void check(Iter first, Iter last, const vector<string>& words) {
 	vector<int> count(50, 0);
-	for (Iter i = first; i != last; ++i) {
+	for (Iter i = first; i != last; advance(i, 1)) {
 		checkWord(*i, words, count);
 	}
 	allThreadTotal.push_back(count);
@@ -56,6 +54,7 @@ void dostuff(string fileName){
 	ifstream file(fileName);
 	if (!file) {
 		cout << "Error" << endl;
+		return;
 	}
 	map<string, int> actual;
 	vector<string> fileVector;
@@ -81,11 +80,12 @@ void dostuff(string fileName){
 	file.close();
 	//have one million words in a vector now
 
-	vector<string> words = {"the", "and", "mama", "was", "zebra", "ice", "word", "pie", "teeth", "love",
-							"so", "kill", "life", "murder", "pizza", "snake", "all", "his", "her", "happy",
-							"color", "have", "stopped", "in", "family", "could", "of", "law", "most", "man",
-							"not", "young", "day", "still", "full", "but", "phone", "soda", "rock", "coin",
-							"computer", "Alaska", "knife", "tape", "dagger", "our", "i", "question", "name", "those" };
+	vector<string> words = {"the", "and", "mama", "was", "degu", "ice", "word", "pie", "teeth", "love",
+							"so", "kill", "life", "murder", "pizza", "asus", "all", "his", "her", "happy",
+							"fairbanks", "have", "water", "in", "family", "could", "of", "law", "most", "man",
+							"not", "young", "hydroflask", "still", "full", "supercalifragilisticexpialidocious", "phone", "soda", "rock", "coin",
+							"computer", "alaska", "knife", "tape", "dagger", "butt", "unicorn", "question", "name", "those" };
+							
 
 	sort(words.begin(), words.end());
 
@@ -94,7 +94,7 @@ void dostuff(string fileName){
 	vector<std::future<void>> results;
 	vector<int> total(50, 0);
 
-	int numThreads = 1;
+	int numThreads = 8;
 
 	for (int i = 0; i < numThreads; ++i) {
 		auto numWords = fileVector.size();
@@ -118,7 +118,7 @@ void dostuff(string fileName){
 	auto diff = endTime - startTime;
 
 	for (int i = 0; i < words.size(); ++i) {
-		cout << std::setw(8) << words[i] << " = " << total[i] << endl;
+		cout << std::setw(34) << words[i] << " = " << total[i] << endl;
 	}
 
 	cout << "It took: " << std::chrono::duration<double>(diff).count() << " seconds for " << numThreads << " thread(s) to complete." << endl;
@@ -126,7 +126,4 @@ void dostuff(string fileName){
 
 int main() {
 	dostuff("fiction.txt");
-	cout << endl;
-	reset();
-	dostuff("academic.txt");
 }

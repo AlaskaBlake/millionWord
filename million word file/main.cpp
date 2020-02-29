@@ -94,7 +94,7 @@ void dostuff(string fileName){
 	vector<std::future<void>> results;
 	vector<int> total(50, 0);
 
-	int numThreads = 8;
+	int numThreads = 1;
 
 	for (int i = 0; i < numThreads; ++i) {
 		auto numWords = fileVector.size();
@@ -123,6 +123,8 @@ void dostuff(string fileName){
 
 	cout << "It took: " << std::chrono::duration<double>(diff).count() << " seconds for " << numThreads << " thread(s) to complete." << endl;
 }
+
+
 
 int main() {
 	dostuff("fiction.txt");
